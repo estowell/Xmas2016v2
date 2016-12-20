@@ -92,22 +92,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void setAlarmService (int seconds){
-
-        Toast.makeText(getApplicationContext(), "Setting up Alarm", Toast.LENGTH_LONG).show();
-
-        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-        Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        Log.d("ALARM: ", "SET");
-
-        Calendar cal = Calendar.getInstance();
-
-        cal.add(Calendar.SECOND, seconds);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
-
-
-    }
 
     private void sendNotification(){
         Notification notification = new NotificationCompat.Builder(context)
