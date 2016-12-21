@@ -5,6 +5,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private Context context;
 
     String TAG = "Main";
+    SharedPreferences preferences;
+    SharedPreferences.Editor sharedPreferencesEditor;
 
 
     @Override
@@ -35,7 +38,11 @@ public class MainActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
-        context = this; //TODO check this!
+        context = this;
+
+        preferences = getSharedPreferences("XmasPreferences", Context.MODE_PRIVATE);
+        sharedPreferencesEditor = preferences.edit();
+        sharedPreferencesEditor.commit();
 
         //create the media player.
         mMediaPlayer =  MediaPlayer.create(this, R.raw.bells);
@@ -63,7 +70,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        setAlarm(2*60*1000);
+
+
+        setAlarm(setAlarmTime());
 
     }
 
@@ -76,6 +85,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
+    private int setAlarmTime(){
+        int convertedToMilli = 60*1000;
+        int time_till_alarm = preferences.getInt("Time", 0);
+
+        Log.d(TAG, "hour" + Calendar.HOUR_OF_DAY);
+
+        if (Calendar.HOUR_OF_DAY > 21){
+            time_till_alarm = 12*60*convertedToMilli;
+            Log.d(TAG, "Time Till Alarm: " +  time_till_alarm);
+            sharedPreferencesEditor.putInt("Time", time_till_alarm);
+            return time_till_alarm;
+        }
+
+        if (time_till_alarm == 0){
+            time_till_alarm = 15;
+        } else if (time_till_alarm > 120){
+            time_till_alarm = 120;
+        } else {
+            time_till_alarm = time_till_alarm*2;
+        }
+
+
+        Log.d(TAG, "Time Till Alarm: " +  time_till_alarm);
+        sharedPreferencesEditor.putInt("Time", time_till_alarm);
+        return (time_till_alarm*convertedToMilli);
+
+    }
 
 
 
