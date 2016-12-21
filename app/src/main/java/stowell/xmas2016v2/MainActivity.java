@@ -1,16 +1,13 @@
 package stowell.xmas2016v2;
 
+
 import android.app.AlarmManager;
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
-import android.os.CountDownTimer;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -20,6 +17,7 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 
+
 public class MainActivity extends AppCompatActivity {
 
 
@@ -28,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Context context;
 
-    private int TIME_UNTIL_FIRST_NOTIFICATION = 15000;
+    String TAG = "Main";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,23 +63,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        setAlarm(2*60*1000);
 
-       // setAlarmService(10);
-
-        CountDownTimer cdtimer = new CountDownTimer(TIME_UNTIL_FIRST_NOTIFICATION, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                Log.d("Main", "Tick");
-            }
-
-            @Override
-            public void onFinish() {
-                Log.d("Main", "DONE");
-                sendNotification();
-            }
-        };
-
-        cdtimer.start();
     }
 
     @Override
@@ -93,21 +77,25 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private void sendNotification(){
-        Notification notification = new NotificationCompat.Builder(context)
-                .setSmallIcon(R.drawable.donkey)
-                .setContentTitle("Merry Christmas!")
-                .setContentText("You're a donkey")
-                .setAutoCancel(true)
-                .setSound(android.net.Uri.parse("android.resource://"
-                        + context.getPackageName() + "/" + R.raw.donkey))
-                .setPriority(Notification.PRIORITY_MAX)
-                .build();
 
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        notificationManager.notify(1, notification);
+
+
+
+    private void setAlarm(int delay)
+    {
+        // TODO Auto-generated method stub
+        Intent i = new Intent(getApplicationContext(), DonkeyActivity.class);
+        i.putExtra("dayORmonth", "day");
+        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(),12345,i, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        Calendar cal = Calendar.getInstance();
+        //cal.set(year, month, d, h, min);
+        //registering our pending intent with alarmmanager
+        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+        am.set(AlarmManager.RTC_WAKEUP, (cal.getTimeInMillis() + delay), pi);
+        //cal.getTimeInMillis();
+        Log.d(TAG, "In set Alarm:" + ((cal.getTimeInMillis() + delay)-cal.getTimeInMillis()));
     }
-
 
 
 }
